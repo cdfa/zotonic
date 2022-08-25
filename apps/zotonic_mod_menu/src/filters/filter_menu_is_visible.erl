@@ -29,8 +29,14 @@ menu_is_visible(_, _Context) ->
 is_visible(undefined, _Context) ->
 	false;
 is_visible(#rsc_tree{ id = RscId }, Context) ->
-	z_acl:rsc_visible(RscId, Context);
+	z_acl:rsc_visible(RscId, Context) and exists(RscId, Context);
 is_visible({RscId, _Items}, Context) ->
-	z_acl:rsc_visible(RscId, Context);
+	z_acl:rsc_visible(RscId, Context) and exists(RscId, Context);
 is_visible(RscId, Context) ->
-	z_acl:rsc_visible(RscId, Context).
+	z_acl:rsc_visible(RscId, Context) and exists(RscId, Context).
+
+exists(RscId, Context) ->
+    case m_rsc:rid(RscId, Context) of
+        undefined -> false;
+        RscId2 -> m_rsc:exists(RscId2, Context)
+    end.
